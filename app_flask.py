@@ -1,44 +1,30 @@
-from flask import Flask, render_template, request, redirect, jsonify
+#import librairies 
+from flask import Flask, request, jsonify
 from pymongo import MongoClient
 
-app = Flask(__name__)
-
-# Liste des utilisateurs (données fictives pour cet exemple)
-users = [
-    {'id': 1, 'name': 'Alice', 'email': 'alice@example.com'},
-    {'id': 2, 'name': 'Bob', 'email': 'bob@example.com'},
-    {'id': 3, 'name': 'Charlie', 'email': 'charlie@example.com'}
-]
-
-@app.route('/')
-def home():
-    return "bonjour"
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-
 
 app = Flask(__name__)
-client = MongoClient('mongodb://localhost:27017/')
-db = client['user_database']
+
+#Connexion à MongoDb
+client = MongoClient('mongodb://mongo:27017')  
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    users = db.users.find()
-    user_list = []
-    for user in users:
-        user_list.append({'username': user['username'], 'email': user['email']})
-    return jsonify({'users': user_list})
+    # Récupèrer les utilisateurs de la base de données et les renvoyer sous forme de JSON
+    users = client.db.users.find()
+    return jsonify([{'name': user['name'], 'email': user['email']} for user in users])
 
-@app.route('/users', methods=['POST'])
-def create_user():
-    user_data = request.get_json()
-    db.users.insert_one(user_data)
-    return jsonify({'message': 'User created successfully'})
+# Liste des utilisateurs de base (données fictives pour cet exemple)
+users = [
+    {'id': 1, 'name': 'Lucas', 'email': 'Lucas@example.com'},
+    {'id': 2, 'name': 'Lahcene', 'email': 'Lahcene@example.com'},
+    {'id': 3, 'name': 'Charlotte', 'email': 'charlotte@example.com'}
+    ]
+
+
+
+# opérations de création, de mise à jour et de suppression (CRUD)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
 
