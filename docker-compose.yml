@@ -4,9 +4,12 @@ version: '3.8'
 services:
   # mon premier service
   app_flask:
+    #l'image
     image: my_app
+    #les ports
     ports:
       - 5000:5000
+    #les dépendances
     depends_on: 
       - mymongodb
 

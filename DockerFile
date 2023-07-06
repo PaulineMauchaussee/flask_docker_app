@@ -1,7 +1,7 @@
 FROM python:3.9
 
 #répertoire de travail
-WORKDIR /app
+WORKDIR /usr/src/app
 
 #Listes des dépendances
 COPY requirements.txt .
@@ -17,4 +17,4 @@ EXPOSE 5000
 
 CMD [ "python", "app_flask.py" ]
 
-#excution de l'image : docker buil -t my_app .
+#excution de l'image : docker build -t my_app .
