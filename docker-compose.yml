@@ -1,21 +1,55 @@
 version: '3.8' 
 
-# liste des services
+# liste des servicedifférents conteneurs
 services:
-  # mon premier service
-  app_flask:
-    #l'image
-    image: my_app
-    #les ports
-    ports:
-      - 5000:5000
-    #les dépendances
-    depends_on: 
-      - mymongodb
-
-
-  # seconde service
+  # mon premier conteneur mongodb
   mymongodb:
+   #image du conteneur
     image: mongo
+    restart: always 
     ports:
       - 27017:27017
+    volumes:
+     - "./data/db:/data/db"
+     #Deploiement d'un réseau
+    networks: 
+      - app-mongo-VNet
+    
+    # conteneur de mon ui pour mongodb
+  mongoui:
+    #image de mon conteneur
+    image: mongo-express
+    restart : always
+    #ports du conteneur 
+    ports:
+      - 8081:8081
+    environment:
+      # renseigne le nom du service contenant la bdd
+      ME_CONFIG_MONGODB_SERVER: mymongodb
+    depends_on: 
+      - mymongodb
+    networks:
+      - app-mongo-VNet
+  
+  #conteneur de mon applicatio flask
+  monapp:
+    # construire à la volée mon image 
+    build: .
+    #ouverture des ports du conteneur de mon application flask
+    ports:
+      - 9002:9001
+    networks:
+     - app-mongo-VNet
+    depends_on:
+      - mymongodb
+    #ajout d'une variable epour récupérer l'IP du conteneur Mongodb
+    environment:
+      - MONGO_HOST=mongodb
+
+
+#fabrique mon réseau
+networks:
+  app-mongo-VNet:
+    driver: bridge 
+ 
+ #démarrer le docker compose : docker compose up

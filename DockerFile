@@ -1,20 +1,21 @@
-FROM python:3.9
-
-#répertoire de travail
-WORKDIR /usr/src/app
+#image source
+FROM python
 
 #Listes des dépendances
-COPY requirements.txt .
+COPY requirements.txt requirements.txt
 
 #Installation des dépendances
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 #Copie de mon application
-COPY . .
+COPY app_flask.py app_flask.py
 
 #ouvrir le port flask
-EXPOSE 5000
+EXPOSE 9001
 
+#démarrer mon application
 CMD [ "python", "app_flask.py" ]
 
 #excution de l'image : docker build -t my_app .
+#construction d'une image à partir du dockerfile 
+#démarrer un conteneur : docker run  -dit --name testappflask -p 9001:9001 monappflask
